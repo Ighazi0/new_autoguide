@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "764541125070",
+    "project_id": "aut0guide",
+    "storage_bucket": "aut0guide.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:764541125070:android:47e8bd6834ed988b8e2b9f",
+        "android_client_info": {
+          "package_name": "com.comma.autoguide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "764541125070-rc1tbojbeqhv58eu9uklfbjhlb6c3h2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeSyCapvhEIEwSd6oQijswNar7svb3pYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "764541125070-rc1tbojbeqhv58eu9uklfbjhlb6c3h2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
