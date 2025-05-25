@@ -1,19 +1,22 @@
 import 'package:autoguide/app/app_style.dart';
 import 'package:autoguide/views/general/widgets/custom_loading.dart';
+import 'package:autoguide/views/general/widgets/empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestorePaginationList extends StatefulWidget {
   final String collection;
-  final String orderByField;
+  final String? orderByField;
+  final Map<String, String>? condition;
   final int pageSize;
   final Widget Function(DocumentSnapshot doc) itemBuilder;
 
   const FirestorePaginationList({
     super.key,
     required this.collection,
-    required this.orderByField,
+    this.orderByField,
     required this.itemBuilder,
+    this.condition,
     this.pageSize = 15,
   });
 
@@ -48,10 +51,34 @@ class _FirestorePaginationListState extends State<FirestorePaginationList> {
       _isLoading = true;
     });
 
-    Query query = FirebaseFirestore.instance
-        .collection(widget.collection)
-        .orderBy(widget.orderByField, descending: true)
-        .limit(widget.pageSize);
+    Query query;
+    if (widget.orderByField == null && widget.orderByField == null) {
+      query = FirebaseFirestore.instance
+          .collection(widget.collection)
+          .limit(widget.pageSize);
+    } else if (widget.orderByField != null && widget.condition != null) {
+      query = FirebaseFirestore.instance
+          .collection(widget.collection)
+          .orderBy(widget.orderByField ?? '', descending: true)
+          .where(
+            widget.condition?.keys.first ?? '',
+            isEqualTo: widget.condition?.values.first ?? '',
+          )
+          .limit(widget.pageSize);
+    } else if (widget.orderByField != null) {
+      query = FirebaseFirestore.instance
+          .collection(widget.collection)
+          .orderBy(widget.orderByField ?? '', descending: true)
+          .limit(widget.pageSize);
+    } else {
+      query = FirebaseFirestore.instance
+          .collection(widget.collection)
+          .where(
+            widget.condition?.keys.first ?? '',
+            isEqualTo: widget.condition?.values.first ?? '',
+          )
+          .limit(widget.pageSize);
+    }
 
     if (_lastDocument != null) {
       query = query.startAfterDocument(_lastDocument!);
@@ -82,6 +109,9 @@ class _FirestorePaginationListState extends State<FirestorePaginationList> {
   Widget build(BuildContext context) {
     if (_lastDocument == null) {
       return CustomLoading();
+    }
+    if (_documents.isEmpty) {
+      return EmptyWidget();
     }
     return RefreshIndicator(
       onRefresh: () async {

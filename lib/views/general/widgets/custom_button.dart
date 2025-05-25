@@ -39,7 +39,7 @@ class CustomButton extends StatelessWidget {
                 onPressed!();
               }
             },
-      height: height ?? 40,
+      height: height ?? 45,
       minWidth: minWidth ?? DeviceServices.width,
       shape: RoundedRectangleBorder(
         borderRadius: AppStyle.borderRadius,

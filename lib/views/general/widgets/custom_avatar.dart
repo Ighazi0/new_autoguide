@@ -1,3 +1,5 @@
+import 'package:autoguide/app/app_assets.dart';
+import 'package:autoguide/views/general/widgets/custom_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CustomAvatar extends StatelessWidget {
@@ -19,34 +21,19 @@ class CustomAvatar extends StatelessWidget {
       width: size,
       decoration: const BoxDecoration(
         color: Color(0xffC3CAD1),
-        borderRadius: BorderRadius.all(Radius.circular(100)),
+        shape: BoxShape.circle,
       ),
-      // child: ClipRRect(
-      //     borderRadius: const BorderRadius.all(Radius.circular(1000)),
-      //     child:
-      // admin
-      //     ? Image.asset(assets.icon)
-      //     : image.isEmpty
-      //         ? Image.asset(type == 'car'
-      //             ? assets.carImage
-      //             : type == 'store'
-      //                 ? assets.store
-      //                 : type == 'nashmi'
-      //                     ? assets.nashmi
-      //                     : assets.person)
-      //         : image.isURL
-      //             ? NImage(
-      //                 image: image,
-      //                 w: size,
-      //                 h: size,
-      //                 fit: BoxFit.cover,
-      //               )
-      //             : Image.file(
-      //                 File(
-      //                   image,
-      //                 ),
-      //                 fit: BoxFit.cover,
-      //               )),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(1000)),
+        child: admin
+            ? Image.asset(ImagesAssets.icon)
+            : CustomNetworkImage(
+                url: image ?? '',
+                width: size,
+                height: size,
+                boxFit: BoxFit.cover,
+              ),
+      ),
     );
   }
 }

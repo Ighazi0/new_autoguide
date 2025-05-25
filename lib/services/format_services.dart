@@ -1,13 +1,59 @@
+import 'package:autoguide/services/locale_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class FormatServices {
+  static String formatElapsedTime(String time) {
+    DateTime now = Timestamp.now().toDate();
+    DateTime inputTime = convertFromMillisecondsSinceEpochToTimestamp(
+      time,
+    ).toDate();
+
+    if (now.isBefore(inputTime)) {
+      final temp = now;
+      now = inputTime;
+      inputTime = temp;
+    }
+
+    final duration = now.difference(inputTime);
+
+    if (duration.inDays >= 365) {
+      final years = (duration.inDays / 365).floor();
+      return '$years ${years > 1 ? 'years'.tr : 'y'.tr}';
+    } else if (duration.inDays >= 30) {
+      final months = (duration.inDays / 30.44).floor();
+      return '$months ${months > 1 ? 'months'.tr : 'month'.tr}';
+    } else if (duration.inDays >= 7) {
+      final weeks = (duration.inDays / 7).floor();
+      return '$weeks ${'w'.tr}';
+    } else if (duration.inDays > 0) {
+      return '${duration.inDays} ${'d'.tr}';
+    } else if (duration.inHours > 0) {
+      return '${duration.inHours} ${'h'.tr}';
+    } else if (duration.inMinutes > 0) {
+      return '${duration.inMinutes} ${'m'.tr}';
+    } else {
+      return '${duration.inSeconds} ${'s'.tr}';
+    }
+  }
+
   static Timestamp convertStringToTimestamp(dynamic time) {
     DateTime dateTime;
     if (time is Timestamp) {
       return time;
     } else {
       dateTime = DateTime.tryParse(time ?? '') ?? DateTime.now();
+      return Timestamp.fromDate(dateTime);
+    }
+  }
+
+  static Timestamp convertFromMillisecondsSinceEpochToTimestamp(dynamic time) {
+    if (time is Timestamp) {
+      return time;
+    } else {
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(time) ?? DateTime.now().millisecondsSinceEpoch,
+      );
       return Timestamp.fromDate(dateTime);
     }
   }
@@ -35,22 +81,6 @@ class FormatServices {
   static bool isPhone(String text) {
     final phoneRegex = RegExp(r'^\d+$');
     return text.isEmpty || phoneRegex.hasMatch(text);
-  }
-
-  static String formatPrice(double number, {int type = 0}) {
-    if (type == 0) {
-      return number.round().toInt().toString();
-    } else {
-      if (type == -1) {
-        return number.truncate().toString();
-      } else {
-        if ((double.tryParse(number.toString().split('.')[1]) ?? 0) == 0) {
-          return '.00';
-        } else {
-          return '.${FormatServices.formatPrice(double.tryParse(number.toString().split('.')[1]) ?? 0)}0';
-        }
-      }
-    }
   }
 
   static String replaceFarsiNumber(String input) {

@@ -1,23 +1,29 @@
+import 'package:autoguide/app/app_style.dart';
+import 'package:autoguide/controllers/main_controller.dart';
 import 'package:autoguide/models/post_model.dart';
+import 'package:autoguide/services/format_services.dart';
 import 'package:autoguide/services/locale_services.dart';
+import 'package:autoguide/views/general/widgets/custom_avatar.dart';
+import 'package:autoguide/views/general/widgets/custom_read_more.dart';
 import 'package:autoguide/views/general/widgets/numbers_converter.dart';
+import 'package:autoguide/views/general/widgets/verify_icon.dart';
+import 'package:autoguide/views/post/icons/comment_icon.dart';
+import 'package:autoguide/views/post/icons/like_icon.dart';
+import 'package:autoguide/views/post/icons/share_icon.dart';
+import 'package:autoguide/views/post/widgets/photo_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class PostContainer extends StatefulWidget {
-  const PostContainer({
-    super.key,
-    required this.postData,
-    this.fromChat = false,
-  });
+  const PostContainer({super.key, required this.postData});
   final PostModel postData;
-  final bool fromChat;
 
   @override
   State<PostContainer> createState() => _PostContainerState();
 }
 
 class _PostContainerState extends State<PostContainer> {
+  final userUid = MainController().userDataNotifier.value?.uid;
   // updatePostData() {
   //   firestore.collection('users').doc(widget.postData.uid).get().then((users) {
   //     UsersModel user = UsersModel.fromJson(
@@ -60,352 +66,185 @@ class _PostContainerState extends State<PostContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              // leading:
-              //     widget.postData.groupData == null
-              //         ? GestureDetector(
-              //           onTap: () {
-              //             // if (widget.postData.uid != 'admin') {
-              //             //   Get.to(
-              //             //     () => ProfileScreen(
-              //             //       userData: widget.postData.userData!,
-              //             //     ),
-              //             //   );
-              //             // }
-              //           },
-              //           child: Avatar(
-              //             image: widget.postData.userData!.profile,
-              //             admin: widget.postData.uid == 'admin',
-              //             size: 40,
-              //           ),
-              //         )
-              //         : SizedBox(
-              //           width: 40,
-              //           height: 40,
-              //           child: Stack(
-              //             children: [
-              //               Avatar(
-              //                 // image: widget.postData.groupData!.cover,
-              //                 admin: widget.postData.uid == 'admin',
-              //                 size: 40,
-              //               ),
-              //               Positioned(
-              //                 bottom: 0,
-              //                 right: 0,
-              //                 child: Avatar(
-              //                   image: widget.postData.userData!.profile,
-              //                   admin: widget.postData.uid == 'admin',
-              //                   size: 25,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              title: GestureDetector(
+        // widget.postData.groupData == null
+        //     ?
+
+        //     :
+        // SizedBox(
+        //   width: 40,
+        //   height: 40,
+        //   child: Stack(
+        //     children: [
+        //       CustomAvatar(
+        //         // image: widget.postData.groupData!.cover,
+        //         admin: widget.postData.uid == 'admin',
+        //         size: 40,
+        //       ),
+        //       Positioned(
+        //         bottom: 0,
+        //         right: 0,
+        //         child: CustomAvatar(
+        //           image: widget.postData.userData!.profile,
+        //           admin: widget.postData.uid == 'admin',
+        //           size: 25,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Row(
+            children: [
+              GestureDetector(
                 onTap: () {},
-                child: Row(
+                child: CustomAvatar(
+                  image: widget.postData.userData?.profile,
+                  admin: widget.postData.uid == 'admin',
+                  size: 35,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.postData.uid == 'admin'
-                          ? 'AUTOGUIDE'
-                          : ('${widget.postData.userData!.firstName} ${widget.postData.userData!.lastName}'),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Wrap(
+                        children: [
+                          Text(
+                            widget.postData.uid == 'admin'
+                                ? 'AUTOGUIDE'
+                                : '${widget.postData.userData!.name}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          if (widget.postData.uid == 'admin')
+                            VerifiedStarIcon(size: 16),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 10),
-                    // if (widget.postData.uid == 'admin')
-                    //   Image.asset(assets.blackStar, height: 15),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Text(
+                          FormatServices.formatElapsedTime(
+                            widget.postData.timestamp,
+                          ),
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                        // if (widget.postData.groupData != null)
+                        //   GestureDetector(
+                        //     onTap: () {},
+                        //     child: Text(
+                        //       ', ${widget.postData.groupData!.name}',
+                        //       style: const TextStyle(
+                        //         fontSize: 12,
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //   ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-              // subtitle: Row(
-              //   children: [
-              //     Text(
-              //       customFormats.formatElapsedTime(widget.postData.timestamp),
-              //       style: const TextStyle(fontSize: 12),
-              //     ),
-              //     if (widget.postData.groupData != null)
-              //       GestureDetector(
-              //         onTap: () {},
-              //         child: Text(
-              //           ', ${widget.postData.groupData!.name}',
-              //           style: const TextStyle(
-              //             fontSize: 12,
-              //             fontWeight: FontWeight.w500,
-              //           ),
-              //         ),
-              //       ),
-              //   ],
-              // ),
-              trailing:
-                  widget.fromChat
-                      ? null
-                      : IconButton(
-                        onPressed: () {
-                          // customBottomSheet.simpleBottomSheet(
-                          //   OptionsBottomSheet(post: widget.postData),
-                          // );
-                        },
-                        icon: const Icon(Icons.more_horiz),
-                      ),
-            ),
-            // if (widget.postData.caption.isNotEmpty)
-            //   Padding(
-            //     padding: const EdgeInsets.only(left: 20, bottom: 10, right: 20),
-            //     child: ReadMoreText(caption: widget.postData.caption, size: 18),
-            //   ),
-            // if (widget.postData.media != null)
-            //   if (widget.postData.media!.isNotEmpty)
-            //     PhotoGrid(mediaUrls: widget.postData.media!),
-            // if (!widget.fromChat)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // Get.to(
-                          //   () => FriendsListScreen(
-                          //     users: widget.postData.likes!,
-                          //   ),
-                          // );
-                        },
-                        child: Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 8,
-                              child: Icon(AntDesign.like_fill, size: 10),
-                            ),
-                            const SizedBox(width: 5),
-                            NumbersConverter(
-                              number: widget.postData.like,
-                              size: 12,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          // customBottomSheet.dragAbleBottomSheet(
-                          //   BottomSheetComment(postData: widget.postData),
-                          // );
-                        },
-                        child: Row(
-                          children: [
-                            NumbersConverter(
-                              number: widget.postData.comments,
-                              size: 12,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              'comments'.tr,
-                              style: const TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(height: 0, color: Colors.grey),
-                ],
+              InkWell(
+                borderRadius: AppStyle.borderRadius,
+                onTap: () {},
+                child: const Icon(Icons.more_horiz),
               ),
-            ),
-            if (!widget.fromChat)
-              Row(
-                children: [
-                  // // Expanded(
-                  // //   child: SizedBox(
-                  // //     height: 40,
-                  // //     child: StreamBuilder(
-                  // //       stream:
-                  // //           firestore
-                  // //               .collection('posts')
-                  // //               .doc(widget.postData.id)
-                  // //               .snapshots(),
-                  // //       builder: (context, snapshot) {
-                  // //         if (snapshot.hasData) {
-                  // //           if (!snapshot.data!.exists) {
-                  // //             return const SizedBox();
-                  // //           }
-                  // //           List likes = snapshot.data!.get('likes') ?? [];
-                  // //           return InkWell(
-                  // //             onTap: () async {
-                  // //               await firestore
-                  // //                   .collection('posts')
-                  // //                   .doc(widget.postData.id)
-                  // //                   .update({
-                  // //                     'like': FieldValue.increment(
-                  // //                       likes.contains(auth.userData.uid)
-                  // //                           ? -1
-                  // //                           : 1,
-                  // //                     ),
-                  // //                     'likes':
-                  // //                         likes.contains(auth.userData.uid)
-                  // //                             ? FieldValue.arrayRemove([
-                  // //                               auth.userData.uid,
-                  // //                             ])
-                  // //                             : FieldValue.arrayUnion([
-                  // //                               auth.userData.uid,
-                  // //                             ]),
-                  // //                   });
-                  // //               if (!likes.contains(auth.userData.uid) &&
-                  // //                   widget.postData.uid != 'admin') {
-                  // //                 customFunctions.setNotification(
-                  // //                   NotificationModel(
-                  // //                     id:
-                  // //                         'like${auth.userData.uid}${widget.postData.id}',
-                  // //                     title:
-                  // //                         '${auth.userData.firstName} ${auth.userData.lastName}',
-                  // //                     body: 'Like your post',
-                  // //                     profile: auth.userData.profile,
-                  // //                     verified: auth.userData.verified,
-                  // //                     type: 'likeYourPost',
-                  // //                     timestamp:
-                  // //                         Timestamp.now()
-                  // //                             .toDate()
-                  // //                             .millisecondsSinceEpoch
-                  // //                             .toString(),
-                  // //                     id1: widget.postData.id,
-                  // //                     uid: auth.userData.uid,
-                  // //                   ),
-                  // //                   widget.postData.uid,
-                  // //                   widget.postData.uid,
-                  // //                 );
-                  // //               }
-                  // //             },
-                  // //             child: Row(
-                  // //               crossAxisAlignment: CrossAxisAlignment.center,
-                  // //               mainAxisAlignment: MainAxisAlignment.center,
-                  // //               children: [
-                  // //                 Icon(
-                  // //                   likes.contains(auth.userData.uid)
-                  // //                       ? AntDesign.like_fill
-                  // //                       : AntDesign.like_outline,
-                  // //                   color:
-                  // //                       likes.contains(auth.userData.uid)
-                  // //                           ? AppStyle.primaryColor
-                  // //                           : null,
-                  // //                 ),
-                  // //                 const SizedBox(width: 5),
-                  // //                 Text(
-                  // //                   'like'.tr,
-                  // //                   style: TextStyle(
-                  // //                     color:
-                  // //                         likes.contains(auth.userData.uid)
-                  // //                             ? AppStyle.primaryColor
-                  // //                             : null,
-                  // //                   ),
-                  // //                 ),
-                  // //               ],
-                  // //             ),
-                  // //           );
-                  // //         }
-                  // //         return InkWell(
-                  // //           onTap: () async {},
-                  // //           child: Row(
-                  // //             crossAxisAlignment: CrossAxisAlignment.center,
-                  // //             mainAxisAlignment: MainAxisAlignment.center,
-                  // //             children: [
-                  // //               Icon(
-                  // //                 widget.postData.likes!.contains(
-                  // //                       auth.userData.uid,
-                  // //                     )
-                  // //                     ? AntDesign.like_fill
-                  // //                     : AntDesign.like_outline,
-                  // //                 color:
-                  // //                     widget.postData.likes!.contains(
-                  // //                           auth.userData.uid,
-                  // //                         )
-                  // //                         ? AppStyle.primaryColor
-                  // //                         : null,
-                  // //               ),
-                  // //               const SizedBox(width: 5),
-                  // //               Text(
-                  // //                 'like'.tr,
-                  // //                 style: TextStyle(
-                  // //                   color:
-                  // //                       widget.postData.likes!.contains(
-                  // //                             auth.userData.uid,
-                  // //                           )
-                  // //                           ? AppStyle.primaryColor
-                  // //                           : null,
-                  // //                 ),
-                  // //               ),
-                  //             ],
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  // Expanded(
-                  //   child: SizedBox(
-                  //     height: 40,
-                  //     child: InkWell(
-                  //       onTap: () {
-                  //         // customBottomSheet.dragAbleBottomSheet(
-                  //         //   BottomSheetComment(postData: widget.postData),
-                  //         // );
-                  //       },
-                  //       child: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.center,
-                  //         children: [
-                  //           const Icon(FontAwesome.comment),
-                  //           const SizedBox(width: 5),
-                  //           Text('comment'.tr),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // Expanded(
-                  //   child: SizedBox(
-                  //     height: 40,
-                  //     child: InkWell(
-                  //       onTap: () {
-                  //         // customBottomSheet.dragAbleBottomSheet(
-                  //         //   ShareBottomSheet(
-                  //         //     list: auth.userData.followingUp ?? [],
-                  //         //     postData: widget.postData,
-                  //         //   ),
-                  //         // );
-                  //       },
-                  //       child: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.center,
-                  //         children: [
-                  //           const Icon(MingCute.share_forward_line),
-                  //           const SizedBox(width: 5),
-                  //           Text('share'.tr),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-          ],
+            ],
+          ),
         ),
-        if (widget.fromChat)
-          Positioned(
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () {},
-              child: Container(color: Colors.black.withValues(alpha: 0)),
+        if (widget.postData.caption.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 10, right: 20),
+            child: CustomReadMore(
+              text: widget.postData.caption,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+                height: 1.5,
+                fontFamily: 'Almarai',
+              ),
             ),
           ),
+        if (widget.postData.media?.isNotEmpty ?? false)
+          PhotoGrid(imageUrls: widget.postData.media?.toList() ?? []),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 8,
+                          backgroundColor: AppStyle.primaryColor,
+                          child: Icon(
+                            AntDesign.like_fill,
+                            size: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        NumbersConverter(
+                          number: widget.postData.like,
+                          size: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        NumbersConverter(
+                          number: widget.postData.comments,
+                          size: 12,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'comments'.tr,
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              LikeIcon(status: widget.postData.likes?.contains(userUid)),
+              CommentIcon(),
+              ShareIcon(),
+            ],
+          ),
+        ),
+        SizedBox(height: 10),
+        Divider(thickness: 3),
       ],
     );
   }

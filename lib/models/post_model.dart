@@ -1,3 +1,4 @@
+import 'package:autoguide/models/media_model.dart';
 import 'package:autoguide/models/user_model.dart';
 
 class PostModel {
@@ -18,7 +19,7 @@ class PostModel {
   List? saves;
   List? views;
   List? hashtags;
-  // List<MediaModel>? media;
+  List<MediaModel>? media;
   UserModel? userData;
   // GroupModel? groupData;
 
@@ -40,6 +41,8 @@ class PostModel {
     this.saves,
     this.hashtags,
     this.userData,
+    this.media,
+
     // this.groupData,
   });
 
@@ -62,14 +65,14 @@ class PostModel {
       'views': views ?? [],
       'hashtags': hashtags ?? [],
       // 'videos': videos?.toJson(),
-      // 'media': media!.map((e) => e.toJson()).toList(),
+      'media': media!.map((e) => e.toJson()).toList(),
       'userData': userData!.toJson(),
       // 'groupData': groupData?.toJson(),
     };
   }
 
   factory PostModel.fromJson(Map json) {
-    // List m = json['media'] ?? [];
+    List m = json['media'] ?? [];
     return PostModel(
       like: json['like'] ?? 0,
       comments: json['comments'] ?? 0,
@@ -89,11 +92,10 @@ class PostModel {
       // videos: MediaModel.fromJson(
       //   json['videos'] == null ? {} : json['videos'] as Map,
       // ),
-      // media: m.map((e) => MediaModel.fromJson(e as Map)).toList(),
-      userData:
-          json['userData'] == null
-              ? null
-              : UserModel.fromJson(json['userData'] as Map),
+      media: m.map((e) => MediaModel.fromJson(e as Map)).toList(),
+      userData: json['userData'] == null
+          ? null
+          : UserModel.fromJson(json['userData'] as Map),
       // groupData:
       //     json['groupData'] == null
       //         ? null

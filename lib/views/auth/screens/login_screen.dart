@@ -48,7 +48,6 @@ class LoginScreen extends StatelessWidget {
                         hint: 'email_address',
                         controller: authController.emailController,
                         autofill: const [AutofillHints.email],
-
                         validator: ValidationServices.email,
                       ),
                       SizedBox(height: 20),
