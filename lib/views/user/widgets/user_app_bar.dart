@@ -1,8 +1,12 @@
 import 'package:autoguide/app/app_assets.dart';
 import 'package:autoguide/app/app_style.dart';
-import 'package:autoguide/services/firebase_services.dart';
+import 'package:autoguide/services/get_data_services.dart';
+import 'package:autoguide/services/navigator_services.dart';
+import 'package:autoguide/views/ai/screens/chat_ai_screen.dart';
 import 'package:autoguide/views/general/widgets/icon_badge.dart';
+import 'package:autoguide/views/user/chats/screens/chats_screen.dart';
 import 'package:autoguide/views/user/plus/widgets/plus_widget.dart';
+import 'package:autoguide/views/user/search/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -18,25 +22,34 @@ class UserAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       elevation: 0.5,
       actions: [
-        IconButton(onPressed: () async {}, icon: Image.asset(ImagesAssets.ai)),
+        IconButton(
+          onPressed: () async {
+            NavigatorServices.push(ChatAiScreen());
+          },
+          icon: Image.asset(ImagesAssets.ai),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Align(
             child: InkWell(
               borderRadius: const BorderRadius.all(Radius.circular(50)),
-              onTap: () {},
+              onTap: () {
+                NavigatorServices.push(SearchScreen());
+              },
               child: const Icon(Icons.search, color: Colors.black),
             ),
           ),
         ),
         StreamBuilder(
-          stream: FirebaseServices().getChatCount(),
+          stream: GetDataServices().getChatCount(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Stack(
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      NavigatorServices.push(ChatsScreen());
+                    },
                     icon: CircleAvatar(
                       backgroundColor: Colors.grey.shade300,
                       child: const Icon(
@@ -92,7 +105,7 @@ class UserAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           StreamBuilder(
-            stream: FirebaseServices().getFriendsCount(),
+            stream: GetDataServices().getFriendsCount(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Stack(
@@ -120,7 +133,7 @@ class UserAppBar extends StatelessWidget implements PreferredSizeWidget {
             },
           ),
           StreamBuilder(
-            stream: FirebaseServices().getNotificationsCount(),
+            stream: GetDataServices().getNotificationsCount(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Stack(

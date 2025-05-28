@@ -19,7 +19,7 @@ class _AutoPlusScreenState extends State<AutoPlusScreen> {
       body: FirestorePaginationList(
         collection: 'posts',
         orderByField: 'timestamp',
-        // condition: {'uid': 'admin'},
+        condition: {'uid': 'admin'},
         itemBuilder: (doc) {
           PostModel post = PostModel.fromJson(
             doc.data() as Map<String, dynamic>,

@@ -6,6 +6,7 @@ import 'package:autoguide/services/locale_services.dart';
 import 'package:autoguide/services/navigator_services.dart';
 import 'package:autoguide/services/validation_services.dart';
 import 'package:autoguide/views/auth/screens/forget_password_screen.dart';
+import 'package:autoguide/views/auth/screens/register_screen.dart';
 import 'package:autoguide/views/general/widgets/custom_button.dart';
 import 'package:autoguide/views/general/widgets/custom_text_button.dart';
 import 'package:autoguide/views/general/widgets/custom_text_field.dart';
@@ -68,6 +69,8 @@ class LoginScreen extends StatelessWidget {
                               CustomButton(
                                 loading: loading,
                                 title: 'sign_in',
+                                fontSize: 16,
+
                                 onPressed: () async {
                                   authController.signIn();
                                 },
@@ -76,7 +79,6 @@ class LoginScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 10),
                       CustomTextButton(
                         title: 'forgotten_password',
                         loading: authController.loading.value,
@@ -105,6 +107,8 @@ class LoginScreen extends StatelessWidget {
                   if (Platform.isIOS)
                     CustomButton(
                       title: 'sign_in_with_apple',
+                      fontSize: 16,
+
                       onPressed: () async {
                         authController.appleSignIn();
                       },
@@ -119,6 +123,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () async {
                       authController.googleSignIn();
                     },
+                    fontSize: 16,
                     textColor: Colors.black,
                     color: Colors.grey.shade300,
 
@@ -127,11 +132,14 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   CustomButton(
                     title: 'create_new_account',
-                    onPressed: () async {},
+                    fontSize: 16,
+
+                    onPressed: () async {
+                      NavigatorServices.push(RegisterScreen());
+                    },
                     border: true,
                     textColor: AppStyle.primaryColor,
                   ),
-                  SizedBox(height: 10),
                 ],
               ),
             ),

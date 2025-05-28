@@ -19,7 +19,6 @@ class CustomTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      textColor: AppStyle.primaryColor,
       onPressed: onPressed == null
           ? null
           : () {
@@ -27,7 +26,13 @@ class CustomTextButton extends StatelessWidget {
                 onPressed!();
               }
             },
-      child: Text(title.tr),
+      child: Text(
+        title.tr,
+        style: TextStyle(
+          color: AppStyle.primaryColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

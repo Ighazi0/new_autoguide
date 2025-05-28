@@ -1,16 +1,14 @@
-import 'dart:io';
+import 'dart:developer';
 import 'dart:ui';
+import 'package:autoguide/data/keys_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get_storage/get_storage.dart';
 
 enum DeviceType { phone, smallTablet, largeTablet }
 
 class DeviceServices {
-  static Future<bool?> checkIfIpad() async {
-    if (Platform.isIOS) {
-      return deviceSize.shortestSide >= 600;
-    }
-    return false;
-  }
+  final cacheDuration = Duration(hours: 1);
+  final getStorage = GetStorage();
 
   static DeviceType get getDeviceType {
     final shortestSide = deviceSize.shortestSide;
@@ -45,20 +43,36 @@ class DeviceServices {
     return Size(screenWidth, screenHeight);
   }
 
-  static double responsiveAspectRatio(double width, double height, int count) {
-    final double childWidth = (deviceSize.width / count);
-    final double childHeight = (height / width) * childWidth;
-    return childWidth / childHeight;
-  }
-
-  static Size reponsiveSize(Size size, {double count = 1, double crop = 0}) {
-    double scaleFactor = (deviceSize.width - crop) / (count * size.width);
-    double newW = size.width * scaleFactor;
-    double newH = size.height * scaleFactor;
-    return Size(newW, newH);
-  }
-
   static void unFocus() {
     FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void cacheData(String key, dynamic data) {
+    getStorage.write(key, {
+      KeysData.data: data,
+      KeysData.timestamp: DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
+  void removeCacheByKey(String key) {
+    getStorage.remove(key);
+  }
+
+  getcachedData(String key) {
+    final cachedData = getStorage.read(key);
+    if (cachedData != null) {
+      final int timestamp = cachedData[KeysData.timestamp];
+      if (DateTime.now().millisecondsSinceEpoch - timestamp <
+          cacheDuration.inMilliseconds) {
+        log("Returning cached response 🔄 $key");
+        return cachedData[KeysData.data];
+      } else {
+        log("Remove cached response 🗑️ $key");
+        removeCacheByKey(key);
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 }

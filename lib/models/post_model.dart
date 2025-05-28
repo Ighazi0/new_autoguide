@@ -1,49 +1,46 @@
+import 'package:autoguide/models/group_model.dart';
 import 'package:autoguide/models/media_model.dart';
 import 'package:autoguide/models/user_model.dart';
 
 class PostModel {
-  int like;
-  int comments;
-  int shares;
-  String address;
-  String caption;
-  String id;
-  String timestamp;
-  String link;
-  String type;
-  String uid;
-  // MediaModel? videos;
-  bool promote;
-  bool video;
-  List? likes;
-  List? saves;
-  List? views;
-  List? hashtags;
-  List<MediaModel>? media;
-  UserModel? userData;
-  // GroupModel? groupData;
+  final int? like;
+  final int? comments;
+  final int? shares;
+  final String? address;
+  final String? caption;
+  final String? id;
+  final String? timestamp;
+  final String? link;
+  final String? type;
+  final String? uid;
+  final bool? promote;
+  final List<String>? likes;
+  final List<String>? saves;
+  final List<String>? views;
+  final List<String>? hashtags;
+  final List<MediaModel>? media;
+  final UserModel? userData;
+  final GroupModel? groupData;
 
   PostModel({
-    this.id = '',
-    this.timestamp = '',
-    this.like = 0,
-    this.comments = 0,
-    this.shares = 0,
-    this.type = '',
-    this.uid = '',
-    this.link = '',
-    this.address = '',
-    this.caption = '',
-    this.promote = false,
-    this.video = false,
+    this.like,
+    this.comments,
+    this.shares,
+    this.address,
+    this.caption,
+    this.id,
+    this.timestamp,
+    this.link,
+    this.type,
+    this.uid,
+    this.promote,
     this.likes,
-    this.views,
     this.saves,
+    this.views,
     this.hashtags,
-    this.userData,
     this.media,
-
-    // this.groupData,
+    this.userData,
+    this.groupData,
   });
 
   Map<String, dynamic> toJson() {
@@ -59,47 +56,42 @@ class PostModel {
       'type': type,
       'uid': uid,
       'promote': promote,
-      'video': video,
-      'saves': saves ?? [],
       'likes': likes ?? [],
+      'saves': saves ?? [],
       'views': views ?? [],
       'hashtags': hashtags ?? [],
-      // 'videos': videos?.toJson(),
-      'media': media!.map((e) => e.toJson()).toList(),
-      'userData': userData!.toJson(),
-      // 'groupData': groupData?.toJson(),
+      'media': media?.map((e) => e.toJson()).toList() ?? [],
+      'userData': userData?.toJson(),
+      'groupData': groupData?.toJson(),
     };
   }
 
-  factory PostModel.fromJson(Map json) {
-    List m = json['media'] ?? [];
+  factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-      like: json['like'] ?? 0,
-      comments: json['comments'] ?? 0,
-      shares: json['shares'] ?? 0,
-      address: json['address'] ?? '',
-      caption: json['caption'] ?? '',
-      id: json['id'] ?? '',
-      timestamp: json['timestamp'] ?? '',
-      link: json['link'] ?? '',
-      saves: json['saves'] ?? [],
-      type: json['type'] ?? '',
-      uid: json['uid'] ?? '',
-      promote: json['promote'] ?? false,
-      likes: json['likes'] ?? [],
-      views: json['views'] ?? [],
-      hashtags: json['hashtags'] ?? [],
-      // videos: MediaModel.fromJson(
-      //   json['videos'] == null ? {} : json['videos'] as Map,
-      // ),
-      media: m.map((e) => MediaModel.fromJson(e as Map)).toList(),
-      userData: json['userData'] == null
-          ? null
-          : UserModel.fromJson(json['userData'] as Map),
-      // groupData:
-      //     json['groupData'] == null
-      //         ? null
-      //         : GroupModel.fromJson(json['groupData'] as Map),
+      like: json['like'] as int?,
+      comments: json['comments'] as int?,
+      shares: json['shares'] as int?,
+      address: json['address'] as String?,
+      caption: json['caption'] as String?,
+      id: json['id'] as String?,
+      timestamp: json['timestamp'] as String?,
+      link: json['link'] as String?,
+      type: json['type'] as String?,
+      uid: json['uid'] as String?,
+      promote: json['promote'] as bool?,
+      likes: (json['likes'] as List?)?.map((e) => e.toString()).toList(),
+      saves: (json['saves'] as List?)?.map((e) => e.toString()).toList(),
+      views: (json['views'] as List?)?.map((e) => e.toString()).toList(),
+      hashtags: (json['hashtags'] as List?)?.map((e) => e.toString()).toList(),
+      media: (json['media'] as List?)
+          ?.map((e) => MediaModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      userData: json['userData'] != null
+          ? UserModel.fromJson(json['userData'] as Map<String, dynamic>)
+          : null,
+      groupData: json['groupData'] != null
+          ? GroupModel.fromJson(json['groupData'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

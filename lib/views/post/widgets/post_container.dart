@@ -1,16 +1,21 @@
 import 'package:autoguide/app/app_style.dart';
 import 'package:autoguide/controllers/main_controller.dart';
 import 'package:autoguide/models/post_model.dart';
+import 'package:autoguide/models/user_model.dart';
 import 'package:autoguide/services/format_services.dart';
 import 'package:autoguide/services/locale_services.dart';
+import 'package:autoguide/services/navigator_services.dart';
+import 'package:autoguide/ui/bottom_sheet_ui.dart';
 import 'package:autoguide/views/general/widgets/custom_avatar.dart';
 import 'package:autoguide/views/general/widgets/custom_read_more.dart';
 import 'package:autoguide/views/general/widgets/numbers_converter.dart';
+import 'package:autoguide/views/general/widgets/users_bottom_sheet.dart';
 import 'package:autoguide/views/general/widgets/verify_icon.dart';
 import 'package:autoguide/views/post/icons/comment_icon.dart';
 import 'package:autoguide/views/post/icons/like_icon.dart';
 import 'package:autoguide/views/post/icons/share_icon.dart';
 import 'package:autoguide/views/post/widgets/photo_grid.dart';
+import 'package:autoguide/views/user/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -23,7 +28,7 @@ class PostContainer extends StatefulWidget {
 }
 
 class _PostContainerState extends State<PostContainer> {
-  final userUid = MainController().userDataNotifier.value?.uid;
+  final userUid = MainController().userData?.uid;
   // updatePostData() {
   //   firestore.collection('users').doc(widget.postData.uid).get().then((users) {
   //     UsersModel user = UsersModel.fromJson(
@@ -69,38 +74,18 @@ class _PostContainerState extends State<PostContainer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // widget.postData.groupData == null
-        //     ?
-
-        //     :
-        // SizedBox(
-        //   width: 40,
-        //   height: 40,
-        //   child: Stack(
-        //     children: [
-        //       CustomAvatar(
-        //         // image: widget.postData.groupData!.cover,
-        //         admin: widget.postData.uid == 'admin',
-        //         size: 40,
-        //       ),
-        //       Positioned(
-        //         bottom: 0,
-        //         right: 0,
-        //         child: CustomAvatar(
-        //           image: widget.postData.userData!.profile,
-        //           admin: widget.postData.uid == 'admin',
-        //           size: 25,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Row(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  NavigatorServices.push(
+                    ProfileScreen(
+                      userData: widget.postData.userData ?? UserModel(),
+                    ),
+                  );
+                },
                 child: CustomAvatar(
                   image: widget.postData.userData?.profile,
                   admin: widget.postData.uid == 'admin',
@@ -113,7 +98,13 @@ class _PostContainerState extends State<PostContainer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        NavigatorServices.push(
+                          ProfileScreen(
+                            userData: widget.postData.userData ?? UserModel(),
+                          ),
+                        );
+                      },
                       child: Wrap(
                         children: [
                           Text(
@@ -136,21 +127,21 @@ class _PostContainerState extends State<PostContainer> {
                       children: [
                         Text(
                           FormatServices.formatElapsedTime(
-                            widget.postData.timestamp,
+                            widget.postData.timestamp ?? '',
                           ),
                           style: const TextStyle(fontSize: 10),
                         ),
-                        // if (widget.postData.groupData != null)
-                        //   GestureDetector(
-                        //     onTap: () {},
-                        //     child: Text(
-                        //       ', ${widget.postData.groupData!.name}',
-                        //       style: const TextStyle(
-                        //         fontSize: 12,
-                        //         fontWeight: FontWeight.w500,
-                        //       ),
-                        //     ),
-                        //   ),
+                        if (widget.postData.groupData != null)
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              ', ${widget.postData.groupData!.name}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ],
@@ -164,11 +155,11 @@ class _PostContainerState extends State<PostContainer> {
             ],
           ),
         ),
-        if (widget.postData.caption.isNotEmpty)
+        if (widget.postData.caption?.isNotEmpty ?? false)
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 10, right: 20),
             child: CustomReadMore(
-              text: widget.postData.caption,
+              text: widget.postData.caption ?? '',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.black,
@@ -180,14 +171,22 @@ class _PostContainerState extends State<PostContainer> {
         if (widget.postData.media?.isNotEmpty ?? false)
           PhotoGrid(imageUrls: widget.postData.media?.toList() ?? []),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      BottomSheetUI.showDragBottomSheet(
+                        (controller) => UsersBottomSheet(
+                          list: widget.postData.likes ?? [],
+                          scrollController: controller,
+                        ),
+                        context,
+                      );
+                    },
                     child: Row(
                       children: [
                         const CircleAvatar(
@@ -201,8 +200,8 @@ class _PostContainerState extends State<PostContainer> {
                         ),
                         const SizedBox(width: 5),
                         NumbersConverter(
-                          number: widget.postData.like,
-                          size: 12,
+                          number: widget.postData.like ?? 0,
+                          size: 13,
                         ),
                       ],
                     ),
@@ -212,15 +211,15 @@ class _PostContainerState extends State<PostContainer> {
                     child: Row(
                       children: [
                         NumbersConverter(
-                          number: widget.postData.comments,
-                          size: 12,
+                          number: widget.postData.comments ?? 0,
+                          size: 13,
                         ),
                         const SizedBox(width: 5),
                         Text(
                           'comments'.tr,
                           style: const TextStyle(
                             color: Colors.black54,
-                            fontSize: 12,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -228,7 +227,6 @@ class _PostContainerState extends State<PostContainer> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -237,13 +235,16 @@ class _PostContainerState extends State<PostContainer> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LikeIcon(status: widget.postData.likes?.contains(userUid)),
+              LikeIcon(
+                status: widget.postData.likes?.contains(userUid),
+                id: widget.postData.id ?? '',
+              ),
               CommentIcon(),
-              ShareIcon(),
+              ShareIcon(postData: widget.postData),
             ],
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 5),
         Divider(thickness: 3),
       ],
     );

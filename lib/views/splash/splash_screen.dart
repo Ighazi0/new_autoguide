@@ -19,7 +19,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   navigator() async {
-    await Future.delayed(Durations.medium1);
+    await Future.delayed(Durations.medium2);
     if (GetStorage().read(KeysData.token) != null) {
       MainController().userDataNotifier.value = UserModel.fromJson(
         GetStorage().read(KeysData.userData),

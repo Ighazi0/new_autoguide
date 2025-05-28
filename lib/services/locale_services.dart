@@ -21,10 +21,10 @@ class LocaleServices {
     ),
   };
 
-  static bool get isAr => (GetStorage().read(KeysData.locale) ?? 'ar') == 'ar';
+  static bool get isAr => (GetStorage().read(KeysData.locale) ?? 'en') == 'ar';
 
   static String get localeCode {
-    return GetStorage().read(KeysData.locale) ?? 'ar';
+    return GetStorage().read(KeysData.locale) ?? 'en';
   }
 
   static LanguageModel languageData() {
